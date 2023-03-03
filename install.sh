@@ -407,7 +407,7 @@ find_tool() {
   do
     if "test_$1" "${executable}"
     then
-      echo "${executable}"
+      readlink -f "${executable}"
       break
     fi
   done < <(which -a "$1")
@@ -447,8 +447,7 @@ fi
 cd "/usr" || exit 1
 
 ####################################################################### script
-USABLE_GIT="$(command -v git)"
-if [[ -z "${USABLE_GIT}" ]]
+if ! command -v git >/dev/null
 then
   abort "$(
     cat <<EOABORT
@@ -456,8 +455,7 @@ You must install Git before installing Homebrew. See:
   ${tty_underline}https://docs.brew.sh/Installation${tty_reset}
 EOABORT
   )"
-elif [[ -n "${HOMEBREW_ON_LINUX-}" ]]
-then
+else
   USABLE_GIT="$(find_tool git)"
   if [[ -z "${USABLE_GIT}" ]]
   then
@@ -482,8 +480,7 @@ You must install cURL before installing Homebrew. See:
   ${tty_underline}https://docs.brew.sh/Installation${tty_reset}
 EOABORT
   )"
-elif [[ -n "${HOMEBREW_ON_LINUX-}" ]]
-then
+else
   USABLE_CURL="$(find_tool curl)"
   if [[ -z "${USABLE_CURL}" ]]
   then
